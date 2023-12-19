@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { openai, supabase } from './config.js'
-import { createEmbeddings } from './processing.js'
 
 function App() {
     const [formStatus, setFormStatus] = useState("start")
