@@ -10,7 +10,7 @@ export const openai = new OpenAI({
   dangerouslyAllowBrowser: true
 });
 
-/** Supabase config */
+/** Supabase-config */
 const privateKey = process.env.SUPABASE_API_KEY;
 const privateKey = SUPABASE_API_KEY;
 if (!privateKey) throw new Error(`Expected env var SUPABASE_API_KEY`);
