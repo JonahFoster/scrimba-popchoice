@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { openai, supabase } from './config.js'
+import logo from './logo.png'
 
 function App() {
     const [formStatus, setFormStatus] = useState("start")
@@ -13,12 +14,12 @@ function App() {
     const [currentMovieIndex, setCurrentMovieIndex] = useState(0)
     
     function handleStartSubmit(e) {
-        e.preventDefault();
-        const peopleInput = document.querySelector('.start-input[type="text"]').value;
-        const runtimeInput = document.querySelector('.start-input[type="text"]:nth-child(2)').value;
-        setTotalPeople(parseInt(peopleInput) || 0);
-        setDesiredRuntime(runtimeInput);
-        setFormStatus("questions");
+        e.preventDefault() 
+        const peopleInput = document.querySelector('.start-input[type="text"]').value 
+        const runtimeInput = document.querySelector('.start-input[type="text"]:nth-child(2)').value 
+        setTotalPeople(parseInt(peopleInput) || 0) 
+        setDesiredRuntime(runtimeInput) 
+        setFormStatus("questions") 
     }
 
     function handleQuestionSubmit(e) {
@@ -33,34 +34,34 @@ function App() {
             agePreference: agePreferenceElement ? agePreferenceElement.value : '',
             mood: moodElement ? moodElement.value : '',
             filmPerson: filmPersonElement ? filmPersonElement.value : ''
-        };
+        } 
 
-        const updatedFormData = [...formData, currentFormData];
+        const updatedFormData = [...formData, currentFormData] 
 
         if (personNumber < totalPeople) {
-            setFormData(updatedFormData);
-            setPersonNumber(prevNumber => prevNumber + 1);
-            document.getElementById(`favoriteMovie${personNumber}`).value = '';
-            document.getElementById(`filmPerson${personNumber}`).value = '';
-            window.scrollTo(0, 0);
+            setFormData(updatedFormData) 
+            setPersonNumber(prevNumber => prevNumber + 1) 
+            document.getElementById(`favoriteMovie${personNumber}`).value = '' 
+            document.getElementById(`filmPerson${personNumber}`).value = '' 
+            window.scrollTo(0, 0) 
         } else {
             window.scrollTo(0, 0)
             setIsLoading(true)
-            const formattedData = formatFormData(updatedFormData);
-            console.log(formattedData);  // Log or process the formatted data
+            const formattedData = formatFormData(updatedFormData) 
+            console.log(formattedData)   // Log or process the formatted data
             processResults(formattedData)
-            setFormStatus("output");
+            setFormStatus("output") 
         }
     }
     
     function handleOutputSubmit() {
-        setFormStatus("start");
-        setPersonNumber(1);
-        setTotalPeople(0);
-        setDesiredRuntime('');
-        setFormData([]);
-        setAiResponseData(null);
-        setIsLoading(false);
+        setFormStatus("start") 
+        setPersonNumber(1) 
+        setTotalPeople(0) 
+        setDesiredRuntime('') 
+        setFormData([]) 
+        setAiResponseData(null) 
+        setIsLoading(false) 
     }
     
     function handlePersonNumber() {
@@ -69,13 +70,13 @@ function App() {
     
     async function processResults(input) {
         try {
-            const embedding = await createEmbedding(input);
-            const match = await findMatch(embedding);
-            await getChatCompletion(match, input);
+            const embedding = await createEmbedding(input) 
+            const match = await findMatch(embedding) 
+            await getChatCompletion(match, input) 
         } catch (error) {
-            console.error('Error in main function.', error);
+            console.error('Error in main function.', error) 
         } finally {
-            setIsLoading(false);
+            setIsLoading(false) 
         }
     }
     
@@ -91,7 +92,7 @@ function App() {
         const { data } = await supabase.rpc('match_movies', {
             query_embedding: embedding,
             match_threshold: 0.50,
-            match_count: 3
+            match_count: 5
         })
   
         // Manage multiple returned matches
@@ -102,8 +103,8 @@ function App() {
     
     const chatMessages = [{
         role: 'system',
-        content: `As a knowledgeable movie expert, your task is to recommend three movies that align with the diverse tastes of multiple people. For each movie, provide its title, release year, and a brief description under 30 words. Format each movie recommendation as a JSON object and return them in an array. Each object should look like this: {"title": "Movie Title", "year": "Release Year", "description": "Brief Description"}. If you are unable to find suitable movies, respond with an array containing a single object: [{"error": "No suitable movies found"}]. Please do not make up results.`
-    }];
+        content: `As a knowledgeable movie expert, your task is to recommend five movies that align with the diverse tastes of multiple people. For each movie, provide its title, release year, and a brief description under 30 words. Format each movie recommendation as a JSON object and return them in an array. Each object should look like this: {"title": "Movie Title", "year": "Release Year", "description": "Brief Description"}. If you are unable to find suitable movies, respond with an array containing a single object: [{"error": "No suitable movies found"}]. Please do not make up results.`
+    }] 
 
     async function getChatCompletion(text, query) {
         chatMessages.push({
@@ -132,10 +133,10 @@ function App() {
                 `  - Favorite Movie: ${data.favoriteMovie}\n` +
                 `  - Age of Movie Preference: ${data.agePreference}\n` +
                 `  - Movie Mood Preference: ${data.mood}\n` +
-                `  - Favorite Film Person Choice: ${data.filmPerson}`;
-        }).join('\n\n');
+                `  - Favorite Film Person Choice: ${data.filmPerson}` 
+        }).join('\n\n') 
 
-        return formattedData;
+        return formattedData 
     }
 
     return (
@@ -143,7 +144,7 @@ function App() {
             {formStatus === "start" && (
             <div>
                 <div className="header start">
-                    <img className="logo" src="./logo.png" />
+                    <img className="logo" src={logo} />
                     <h1>PopChoice</h1>
                 </div>
                 <div className="start-inputs">
@@ -157,7 +158,7 @@ function App() {
             {formStatus === "questions" && (
             <div>
                 <div className="header questions">
-                    <img className="logo" src="./logo.png" />
+                    <img className="logo" src={logo} />
                     <h1>{personNumber}</h1>
                 </div>
                 <form className="questions-container" onSubmit={handleQuestionSubmit}>
@@ -349,7 +350,7 @@ function App() {
     ) : aiResponseData && aiResponseData.length > 0 ? (
         <div className="output-container">
             <div className="header output">
-                <img className="logo" src="./logo.png" />
+                <img className="logo" src={logo} />
                 <h1>PopChoice</h1>
             </div>
             <p className="question-label">Your suggested movie is:</p>
@@ -379,7 +380,7 @@ function App() {
     )
 )}
         </main>
-    );
+    ) 
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />) 
